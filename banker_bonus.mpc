@@ -1,16 +1,28 @@
+# coding: latin-1
+"""
+  Solve Bankers bonus, aka Millionaires problem.
+  to deduce the maximum value from a range of integer input.
 
-from Compiler.types import sint ,sfix, regint, Array, MemValue
+  Demonstrate clients external to computing parties supplying input and receiving an authenticated result. See bankers-bonus-client.cpp for client (and setup instructions).
+
+  Wait for MAX_NUM_CLIENTS to join the game or client finish flag to be sent
+  before calculating the maximum.
+
+  Note each client connects in a single thread and so is potentially blocked.
+
+  Each round / game will reset and so this runs indefinitiely.
+"""
+
+from Compiler.types import sint, regint, Array, MemValue
 from Compiler.library import print_ln, do_while, for_range
 from Compiler.util import if_else
 
 PORTNUM = 14000
-MAX_NUM_CLIENTS = 2
+MAX_NUM_CLIENTS = 8
+n_rounds = 0
 
-N = int(program.args[1])   # num of images 48
-
-
-# num_classes = int(program.args[2])  # 7
-
+if len(program.args) > 1:
+    n_rounds = int(program.args[1])
 
 
 def accept_client():
@@ -18,47 +30,52 @@ def accept_client():
     last = regint.read_from_socket(client_socket_id)
     return client_socket_id, last
 
+
 def close_connections(number_clients):
     @for_range(number_clients)
     def _(i):
         closeclientconnection(i)
 
+
 def client_input(t, client_socket_id):
     """
     Send share of random value, receive input and deduce share.
     """
-    return t.receive_from_client(N, client_socket_id)[0]
+
+    return t.receive_from_client(1, client_socket_id)[0]
 
 
-def find_accuracy(y_truth_1d,  y_predict):
+def determine_winner(number_clients, client_values, client_ids):
+    """Work out and return client_id which corresponds to max client_value"""
+    max_value = Array(1, client_values.value_type)
+    max_value[0] = client_values[0]
+    win_client_id = Array(1, sint)
+    win_client_id[0] = client_ids[0]
 
-    # corr = sfix(0)
-    corr_arr = Array(N ,sint)
-    corr_arr.assign_vector(y_truth_1d.get_vector() -  y_predict.get_vector())
-    corr = sint(0)
-    for i in range(N):
-        # def _(i):
-        # global corr
-        right = (corr_arr[i] == 0)
-        print_ln("%s", right.reveal())
-        corr = corr + right
+    @for_range(number_clients - 1)
+    def loop_body(i):
+        # Is this client input a new maximum, will be sint(1) if true, else sint(0)
+        is_new_max = max_value[0] < client_values[i + 1]
+        # Keep latest max_value
+        max_value[0] = if_else(is_new_max, client_values[i + 1], max_value[0])
+        # Keep current winning client id
+        win_client_id[0] = if_else(is_new_max, client_ids[i + 1], win_client_id[0])
 
-    return corr
-
+    print_ln('maximum: %s', max_value[0].reveal())
+    return win_client_id[0]
 
 
-def write_metrics_to_evaluator(socket, corr):
+def write_winner_to_clients(sockets, number_clients, winning_client_id):
+    """Send share of winning client id to all clients who joined game."""
+
     # Setup authenticate result using share of random.
     # client can validate ? winning_client_id * ? rnd_from_triple = ? auth_result
-
     rnd_from_triple = sint.get_random_triple()[0]
-    # auth_corr_m = corr_m * rnd_from_triple[0]
-    # auth_corr_f = corr_f * rnd_from_triple[1]
-    auth_corr = corr * rnd_from_triple
+    auth_result = winning_client_id * rnd_from_triple
 
-    sint.write_shares_to_socket(socket, [corr, rnd_from_triple, auth_corr])
-    # sint.write_shares_to_socket(socket, [corr_f, rnd_from_triple[1], auth_corr_f])
-    # sint.write_shares_to_socket(socket, [count_m, rnd_from_triple[2], auth_count_m])
+    @for_range(number_clients)
+    def loop_body(i):
+        sint.write_shares_to_socket(sockets[i], [winning_client_id, rnd_from_triple, auth_result])
 
 
 def main():
@@ -68,70 +85,68 @@ def main():
     listen_for_clients(PORTNUM)
     print_ln('Listening for client connections on base port %s', PORTNUM)
 
-    def perfrom_private_fair_evaluation(_=None):
-        print_ln('Starting evaluation...')
-        print_ln('Player 0 is evaluator, Player 1 is model owner')
+    def game_loop(_=None):
+        print_ln('Starting a new round of the game.')
 
         # Clients socket id (integer).
         client_sockets = Array(MAX_NUM_CLIENTS, regint)
-
         # Number of clients
         number_clients = MemValue(regint(0))
-
         # Client ids to identity client
         client_ids = Array(MAX_NUM_CLIENTS, sint)
-
         # Keep track of received inputs
         seen = Array(MAX_NUM_CLIENTS, regint)
         seen.assign_all(0)
+
         # Loop round waiting for each client to connect
         @do_while
         def client_connections():
             client_id, last = accept_client()
+
             @if_(client_id >= MAX_NUM_CLIENTS)
             def _():
                 print_ln('client id too high')
                 crash()
+
             client_sockets[client_id] = client_id
             client_ids[client_id] = client_id
             seen[client_id] = 1
+
             @if_(last == 1)
             def _():
                 number_clients.write(client_id + 1)
+
             return (sum(seen) < number_clients) + (number_clients == 0)
 
-        def run_prog(t):
-
+        def type_run(t):
             # Clients secret input.
-            y_predict = Array(N ,t)
-            y_truth_1d = Array(N ,t)
-            print_ln("Inside")
-            # y_prob = sfix.Matrix(N,num_classes)
-            # sensitive = Array(N,t)
+            client_values = t.Array(MAX_NUM_CLIENTS)
 
-            # y_truth_1d = client_input(t, 0)
-            # sensitive = client_input(t, 0)
-            # y_predict = client_input(t, 1)
-            data = t.Matrix(MAX_NUM_CLIENTS ,N)
             @for_range(number_clients)
             def _(client_id):
-                # print(type(client_id))
-                data[client_id] = client_input(t, client_id)
-                # if MemValue(client_id) == 0:
-                #       y_truth_1d = data
-                # else:
-                #       y_predict = data
-            print_ln("Inside2")
-            y_predict = data[1]
-            print_ln("y_predict:%s" ,data[1].reveal())
-            y_truth_1d = data[0]
+                client_values[client_id] = client_input(t, client_id)
 
-            corr = find_accuracy(y_truth_1d,  y_predict)
-            write_metrics_to_evaluator(client_sockets[0],
-                                       corr)
-        run_prog(sint)
-        # run_prog(sfix)
+            winning_client_id = determine_winner(number_clients, client_values,
+                                                 client_ids)
+
+            # print_ln('Found winner, index: %s.', winning_client_id.reveal())
+
+            write_winner_to_clients(client_sockets, number_clients,
+                                    winning_client_id)
+
+        type_run(sint)
+        type_run(sfix)
+
         close_connections(number_clients)
+
         return True
-    perfrom_private_fair_evaluation()
+
+    if n_rounds > 0:
+        print('run %d rounds' % n_rounds)
+        for_range(n_rounds)(game_loop)
+    else:
+        print('run forever')
+        do_while(game_loop)
+
+
 main()
