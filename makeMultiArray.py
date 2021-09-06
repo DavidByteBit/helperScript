@@ -3,6 +3,8 @@ from Compiler.library import *
 
 import json
 
+program.options_from_args()
+
 populator_len = 1000
 
 bounds1 = json.loads(program.args[1])  # 4d
