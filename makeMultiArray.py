@@ -31,6 +31,8 @@ populator = sfix.Array(populator_len)
 def _(i):
     populator[i] = sfix(i)
 
+print_ln("%s", populator.reveal())
+
 
 a.assign_vector(populator.get_part_vector(0, sum_of_bounds1))
 b.assign_vector(populator.get_part_vector(sum_of_bounds1, sum_of_bounds1 + sum_of_bounds2))
