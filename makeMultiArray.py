@@ -3,6 +3,9 @@ from Compiler.library import *
 from Compiler import ml
 
 import json
+from functools import reduce
+import operator
+
 
 # program.options_from_args()
 
@@ -16,9 +19,9 @@ bounds3 = [200]
 # bounds2 = json.loads(program.args[2])  # 2d
 # bounds3 = json.loads(program.args[3])  # 1d
 
-sum_of_bounds1 = sum(bounds1)
-sum_of_bounds2 = sum(bounds2)
-sum_of_bounds3 = sum(bounds3)
+sum_of_bounds1 = reduce(operator.mul, bounds1)
+sum_of_bounds2 = reduce(operator.mul, bounds2)
+sum_of_bounds3 = reduce(operator.mul, bounds3)
 
 a = sfix.Tensor(bounds1)
 b = sfix.Tensor(bounds2)
