@@ -18,15 +18,19 @@ def accept_client():
     last = regint.read_from_socket(client_socket_id)
     return client_socket_id, last
 
+
 def close_connections(number_clients):
     @for_range(number_clients)
     def _(i):
         closeclientconnection(i)
 
+
 def client_input(t, client_socket_id):
     """
     Send share of random value, receive input and deduce share.
     """
+    print_ln("%s", N)
+    print_ln("%s", client_socket_id)
     return t.receive_from_client(N, client_socket_id)[0]
 
 
