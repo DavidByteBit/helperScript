@@ -132,6 +132,8 @@ def main():
 
             print_ln("client_input exited...")
 
+            print_ln("%s", client_values.reveal_nested())
+
             # winning_client_id = determine_winner(number_clients, client_values,
             #                                      client_ids)
             #
