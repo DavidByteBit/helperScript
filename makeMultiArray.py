@@ -1,53 +1,35 @@
 from Compiler.types import *
 from Compiler.library import *
-from Compiler import ml
 
-import json
 from functools import reduce
 import operator
 
 
-# program.options_from_args()
-
 populator_len = 1000
 
-bounds1 = [10, 5, 2, 5]
-bounds2 = [10, 50]
-bounds3 = [200]
+bounds1 = [10, 5, 2, 5]  # 4d Tensor
+bounds2 = [10, 50]  # 2d Tensor
 
-# bounds1 = json.loads(program.args[1])  # 4d
-# bounds2 = json.loads(program.args[2])  # 2d
-# bounds3 = json.loads(program.args[3])  # 1d
-
-prod_of_bounds1 = reduce(operator.mul, bounds1)
-prod_of_bounds2 = reduce(operator.mul, bounds2)
-prod_of_bounds3 = reduce(operator.mul, bounds3)
+prod_of_bounds1 = reduce(operator.mul, bounds1)  # Tell us how many elements are in tensor
+prod_of_bounds2 = reduce(operator.mul, bounds2)  # Tell us how many elements are in tensor
 
 a = sfix.Tensor(bounds1)
 b = sfix.Tensor(bounds2)
-# c = sfix.Tensor(bounds3)
 
-populator = sfix.Array(populator_len)
+populator = sfix.Array(populator_len) # Make 1d Array - will be used to populate tensors
 
 
 @for_range(populator_len)
 def _(i):
     populator[i] = sfix(i)
 
+
 print_ln("%s", populator.reveal())
 
-
+# Works exactly how you may think - takes the flat 'populator' array and gives it structure in the tensor
 a.assign_vector(populator.get_part_vector(0, prod_of_bounds1))
 b.assign_vector(populator.get_part_vector(prod_of_bounds1, prod_of_bounds2))
-# c.assign_vector(
-#     populator.get_part_vector(prod_of_bounds1 + prod_of_bounds2, prod_of_bounds3))
 
 print_ln("%s", a.reveal_nested())
 print_ln("%s", b.reveal_nested())
-# print_ln("%s", c.reveal_nested())
 
-# ####### TEST 1: use the bounds to populate arrays 1 element at a time #######
-# sum_of_bounds1 = sum(bounds1)
-# @for_range(sum_of_bounds1)
-# def _(i):
-#     a.
