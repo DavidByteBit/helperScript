@@ -42,7 +42,9 @@ def client_input(t, client_socket_id):
     Send share of random value, receive input and deduce share.
     """
 
-    return t.receive_from_client(1, client_socket_id)[0]
+    print_ln("client_input entered...")
+
+    return t.receive_from_client(5, client_socket_id)[0]
 
 
 def determine_winner(number_clients, client_values, client_ids):
@@ -121,6 +123,8 @@ def main():
         def type_run(t):
             # Clients secret input.
             client_values = t.Array(MAX_NUM_CLIENTS)
+
+            print_ln("type_run entered...")
 
             @for_range(number_clients)
             def _(client_id):
