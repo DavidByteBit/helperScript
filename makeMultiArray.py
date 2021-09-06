@@ -4,13 +4,17 @@ from Compiler import ml
 
 import json
 
-program.options_from_args()
+# program.options_from_args()
 
 populator_len = 1000
 
-bounds1 = json.loads(program.args[1])  # 4d
-bounds2 = json.loads(program.args[2])  # 2d
-bounds3 = json.loads(program.args[3])  # 1d
+bounds1 = [10, 5, 2, 5]
+bounds2 = [10, 30]
+bounds3 = [200]
+
+# bounds1 = json.loads(program.args[1])  # 4d
+# bounds2 = json.loads(program.args[2])  # 2d
+# bounds3 = json.loads(program.args[3])  # 1d
 
 sum_of_bounds1 = sum(bounds1)
 sum_of_bounds2 = sum(bounds2)
@@ -30,7 +34,8 @@ def _(i):
 
 a.assign_vector(populator.get_part_vector(0, sum_of_bounds1))
 b.assign_vector(populator.get_part_vector(sum_of_bounds1, sum_of_bounds1 + sum_of_bounds2))
-c.assign_vector(populator.get_part_vector(sum_of_bounds1 + sum_of_bounds2, sum_of_bounds1 + sum_of_bounds2 + sum_of_bounds3))
+c.assign_vector(
+    populator.get_part_vector(sum_of_bounds1 + sum_of_bounds2, sum_of_bounds1 + sum_of_bounds2 + sum_of_bounds3))
 
 print_ln("%s", a.reveal_nested())
 print_ln("%s", b.reveal_nested())
