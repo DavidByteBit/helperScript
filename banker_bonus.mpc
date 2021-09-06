@@ -130,13 +130,15 @@ def main():
             def _(client_id):
                 client_values[client_id] = client_input(t, client_id)
 
-            winning_client_id = determine_winner(number_clients, client_values,
-                                                 client_ids)
+            print_ln("client_input exited...")
 
-            # print_ln('Found winner, index: %s.', winning_client_id.reveal())
-
-            write_winner_to_clients(client_sockets, number_clients,
-                                    winning_client_id)
+            # winning_client_id = determine_winner(number_clients, client_values,
+            #                                      client_ids)
+            #
+            # # print_ln('Found winner, index: %s.', winning_client_id.reveal())
+            #
+            # write_winner_to_clients(client_sockets, number_clients,
+            #                         winning_client_id)
 
         type_run(sint)
         type_run(sfix)
