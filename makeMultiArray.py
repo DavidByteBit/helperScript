@@ -19,9 +19,9 @@ bounds3 = [200]
 # bounds2 = json.loads(program.args[2])  # 2d
 # bounds3 = json.loads(program.args[3])  # 1d
 
-sum_of_bounds1 = reduce(operator.mul, bounds1)
-sum_of_bounds2 = reduce(operator.mul, bounds2)
-sum_of_bounds3 = reduce(operator.mul, bounds3)
+prod_of_bounds1 = reduce(operator.mul, bounds1)
+prod_of_bounds2 = reduce(operator.mul, bounds2)
+prod_of_bounds3 = reduce(operator.mul, bounds3)
 
 a = sfix.Tensor(bounds1)
 b = sfix.Tensor(bounds2)
@@ -37,10 +37,10 @@ def _(i):
 print_ln("%s", populator.reveal())
 
 
-a.assign_vector(populator.get_part_vector(0, sum_of_bounds1))
-b.assign_vector(populator.get_part_vector(sum_of_bounds1, sum_of_bounds1 + sum_of_bounds2))
+a.assign_vector(populator.get_part_vector(0, prod_of_bounds1))
+b.assign_vector(populator.get_part_vector(prod_of_bounds1, prod_of_bounds2))
 # c.assign_vector(
-#     populator.get_part_vector(sum_of_bounds1 + sum_of_bounds2, sum_of_bounds1 + sum_of_bounds2 + sum_of_bounds3))
+#     populator.get_part_vector(prod_of_bounds1 + prod_of_bounds2, prod_of_bounds3))
 
 print_ln("%s", a.reveal_nested())
 print_ln("%s", b.reveal_nested())
