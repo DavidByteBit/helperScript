@@ -31,7 +31,7 @@ def client_input(t, client_socket_id):
     """
     print_ln("%s", N)
     print_ln("%s", client_socket_id)
-    return t.receive_from_client(N, client_socket_id)[0]
+    return t.receive_from_client(N, client_socket_id)
 
 
 def find_accuracy(y_truth_1d,  y_predict):
