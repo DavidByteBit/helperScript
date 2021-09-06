@@ -6,7 +6,7 @@ from Compiler.util import if_else
 PORTNUM = 14000
 MAX_NUM_CLIENTS = 2
 
-N = 5   # num of images 48
+N = 1   # num of images 48
 
 
 # num_classes = int(program.args[2])  # 7
