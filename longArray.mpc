@@ -1,19 +1,39 @@
 
 
-two_mil = 20000000
+len = 20000000
 
-a = sfix.Array(two_mil)
-b = sfix.Array(two_mil)
+a = sfix.Array(len)
+b = sfix.Array(len)
 
-@for_range(two_mil)
+@for_range(len)
 def _(i):
     a[i] = sfix(i)
     b[i] = sfix(i)
 
 
-c = sfix.Array(two_mil)
+c = sfix.Array(len)
 
-@for_range_opt(two_mil, budget=two_mil)
+@for_range_opt(len, budget=len)
+def _(i):
+    c[i] = a[i] / b[i]
+
+
+@for_range_opt(len, budget=len/10)
+def _(i):
+    c[i] = a[i] / b[i]
+
+
+@for_range_opt(len, budget=len/100)
+def _(i):
+    c[i] = a[i] / b[i]
+
+
+@for_range_opt(len, budget=len/1000)
+def _(i):
+    c[i] = a[i] / b[i]
+
+
+@for_range(len, budget=len)
 def _(i):
     c[i] = a[i] / b[i]
 
