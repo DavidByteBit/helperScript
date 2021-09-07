@@ -3,7 +3,17 @@
 two_mil = 2000000
 
 a = sfix.Array(two_mil)
+b = sfix.Array(two_mil)
 
 @for_range(two_mil)
 def _(i):
     a[i] = sfix(i)
+    b[i] = sfix(i)
+
+
+c = sfix.Array(two_mil)
+
+@for_range(two_mil)
+def _(i):
+    c[i] = a[i] * b[i]
+
