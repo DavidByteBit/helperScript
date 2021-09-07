@@ -13,7 +13,7 @@ def _(i):
 
 c = sfix.Array(two_mil)
 
-@for_range(two_mil)
+@for_range_opt(two_mil)
 def _(i):
     c[i] = a[i] * b[i]
 
