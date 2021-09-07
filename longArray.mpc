@@ -1,4 +1,9 @@
 
 
-a = sfix.Array(1000000)
+two_mil = 2000000
 
+a = sfix.Array(two_mil)
+
+@for_range(two_mil)
+def _(i):
+    a[i] = sfix(i)
