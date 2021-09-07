@@ -31,14 +31,14 @@ c = sfix.Array(len)
 #     c[i] = a[i] / b[i]
 
 
-## RESULT: Compiled 3200000 lines, used ~5Gb of RAM
-@for_range_opt(len, budget=len/1000)
-def _(i):
-    c[i] = a[i] / b[i]
-#
-
-## RESULT: Compiled 3200000 lines, used ~5Gb of RAM
-# @for_range(len, budget=len)
+## RESULT: Compiled < 100000 lines, used ~0Gb of RAM
+# @for_range_opt(len, budget=len/1000)
 # def _(i):
 #     c[i] = a[i] / b[i]
+#
+
+## RESULT: Compiled < 100000 lines, used ~0Gb of RAM
+@for_range(len)
+def _(i):
+    c[i] = a[i] / b[i]
 
