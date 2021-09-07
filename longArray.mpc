@@ -13,9 +13,10 @@ def _(i):
 
 c = sfix.Array(len)
 
-@for_range_opt(len, budget=len)
-def _(i):
-    c[i] = a[i] / b[i]
+# RESULT: Compiled 9600000+ lines (stopped responding, ran out of RAM)
+# @for_range_opt(len, budget=len)
+# def _(i):
+#     c[i] = a[i] / b[i]
 
 
 @for_range_opt(len, budget=len/10)
@@ -23,17 +24,17 @@ def _(i):
     c[i] = a[i] / b[i]
 
 
-@for_range_opt(len, budget=len/100)
-def _(i):
-    c[i] = a[i] / b[i]
-
-
-@for_range_opt(len, budget=len/1000)
-def _(i):
-    c[i] = a[i] / b[i]
-
-
-@for_range(len, budget=len)
-def _(i):
-    c[i] = a[i] / b[i]
+# @for_range_opt(len, budget=len/100)
+# def _(i):
+#     c[i] = a[i] / b[i]
+#
+#
+# @for_range_opt(len, budget=len/1000)
+# def _(i):
+#     c[i] = a[i] / b[i]
+#
+#
+# @for_range(len, budget=len)
+# def _(i):
+#     c[i] = a[i] / b[i]
 
